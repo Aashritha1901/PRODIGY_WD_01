@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0" />
+<title>Colorful Interactive Navbar (Enhanced)</title>
+
+<!-- Optional: Google Font (comment out if offline) -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+  
+  :root {
+    --nav-height: 72px;
+    --clr-bg-body-start: #f3f3f3;
+    --clr-bg-body-end: #fefefe;
+    --clr-nav-grad-1: #1f1c2c;
+    --clr-nav-grad-2: #928dab;
+    --clr-nav-scrolled-1: #0f0c29;
+    --clr-nav-scrolled-2: #302b63;
+    --clr-nav-scrolled-3: #24243e;
+    --clr-accent: #fbff0c;
+    --clr-accent-2: #ff7ee2;
+    --clr-accent-3: #7ad1ff;
+    --clr-text-dark: #222;
+    --clr-text-med: #333;
+    --nav-backdrop-opacity: 0.6;
+    --nav-transition: 0.3s ease;
+    --radius-pill: 999px;
+  }
+
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, var(--clr-bg-body-start), var(--clr-bg-body-end));
+    color: var(--clr-text-med);
+    line-height: 1.5;
+  }
+
+  
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent-2), var(--clr-accent-3));
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--nav-height);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(12px);
+    background: rgba(31, 28, 44, var(--nav-backdrop-opacity));
+    background-image: linear-gradient(
+      90deg,
+      var(--clr-nav-grad-1),
+      var(--clr-nav-grad-2)
+    );
+    background-size: 200% 200%;
+    animation: navGradient 8s ease infinite;
+    transition: background var(--nav-transition), box-shadow var(--nav-transition), height var(--nav-transition), padding var(--nav-transition);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  nav.scrolled {
+    background-image: linear-gradient(
+      90deg,
+      var(--clr-nav-scrolled-1),
+      var(--clr-nav-scrolled-2),
+      var(--clr-nav-scrolled-3)
+    );
+    background-size: 200% 200%;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+
+  @keyframes navGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  
+  .nav-inner {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  
+  .nav-brand {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: transform var(--nav-transition);
+  }
+  .nav-brand:hover { transform: scale(1.05); }
+
+  
+  .nav-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    transition: opacity var(--nav-transition);
+  }
+
+  .nav-menu li {
+    position: relative;
+  }
+
+  .nav-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    position: relative;
+    transition: transform var(--nav-transition), color var(--nav-transition), text-shadow var(--nav-transition);
+  }
+
+  
+  .nav-menu a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, var(--clr-accent), var(--clr-accent-2), var(--clr-accent-3));
+    transition: width var(--nav-transition);
+    border-radius: var(--radius-pill);
+  }
+
+  .nav-menu a:hover {
+    color: var(--clr-accent);
+    transform: scale(1.08);
+    text-shadow: 0 0 8px rgba(251,255,12,0.8);
+  }
+
+  .nav-menu a:hover::after {
+    width: 100%;
+  }
+
+  
+  .nav-menu a.active {
+    color: var(--clr-accent-2);
+    text-shadow: 0 0 8px rgba(255,126,226,0.8);
+  }
+  .nav-menu a.active::after {
+    width: 100%;
+  }
+
+ 
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: 2px solid var(--clr-accent);
+    border-radius: var(--radius-pill);
+    padding: 0.25rem 0.75rem;
+    color: var(--clr-accent);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background var(--nav-transition), color var(--nav-transition), transform var(--nav-transition);
+  }
+  .nav-toggle:focus-visible {
+    outline: 2px solid var(--clr-accent-3);
+    outline-offset: 2px;
+  }
+  .nav-toggle:hover {
+    background: var(--clr-accent);
+    color: #000;
+    transform: scale(1.05);
+  }
+
+  
+  @media (max-width: 768px) {
+    nav {
+      padding: 0 1rem;
+    }
+    .nav-toggle {
+      display: inline-block;
+    }
+    .nav-menu {
+      position: absolute;
+      top: var(--nav-height);
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      gap: 1.25rem;
+      padding: 1.5rem 0 2rem;
+      background: rgba(15,12,41,0.95);
+      backdrop-filter: blur(16px);
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: max-height var(--nav-transition), opacity var(--nav-transition);
+    }
+    .nav-menu.open {
+      max-height: 500px; 
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav-menu a {
+      font-size: 1.25rem;
+    }
+  }
+
+
+  main {
+    padding-top: calc(var(--nav-height) + 16px);
+  }
+
+  section {
+    height: 100vh;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    transition: background 0.5s ease;
+    position: relative;
+  }
+
+  section:nth-of-type(even) {
+    background: linear-gradient(to right, #dbe6f6, #c5796d);
+    color: var(--clr-text-med);
+  }
+
+  section:nth-of-type(odd) {
+    background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+    color: var(--clr-text-dark);
+  }
+
+  section h1 {
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+  }
+
+  section p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  
+  @media (max-width: 480px) {
+    section p {
+      font-size: 1.1rem;
+    }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    nav { animation: none; }
+    .nav-menu a,
+    .nav-menu a::after,
+    #scroll-progress {
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- Navigation Bar -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#home" class="nav-brand">BrandName</a>
+
+    <button
+      id="navToggle"
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="primary-navigation">
+      Menu
+    </button>
+
+    <ul id="primary-navigation" class="nav-menu" role="menubar">
+      <li role="none"><a role="menuitem" href="#home">Home</a></li>
+      <li role="none"><a role="menuitem" href="#about">About</a></li>
+      <li role="none"><a role="menuitem" href="#services">Services</a></li>
+      <li role="none"><a role="menuitem" href="#portfolio">Portfolio</a></li>
+      <li role="none"><a role="menuitem" href="#blog">Blog</a></li>
+      <li role="none"><a role="menuitem" href="#faq">FAQ</a></li>
+      <li role="none"><a role="menuitem" href="#contact">Contact</a></li>
+      <li role="none"><a role="menuitem" href="#login">Login</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Content Sections -->
+<main>
+  <section id="home">
+    <h1>Welcome to Our World</h1>
+    <p>Scroll to explore a vibrant and interactive navigation experience.</p>
+  </section>
+
+  <section id="about">
+    <h1>About Us</h1>
+    <p>We are passionate about design, development, and user experience.</p>
+  </section>
+
+  <section id="services">
+    <h1>Our Services</h1>
+    <p>We offer full-stack web solutions with creativity and performance.</p>
+  </section>
+
+  <section id="portfolio">
+    <h1>Portfolio</h1>
+    <p>Check out our latest designs and development projects.</p>
+  </section>
+
+  <section id="blog">
+    <h1>Blog</h1>
+    <p>Insights, tutorials, and stories from our creative team.</p>
+  </section>
+
+  <section id="faq">
+    <h1>FAQ</h1>
+    <p>Answers to common questions about what we do and how we work.</p>
+  </section>
+
+  <section id="contact">
+    <h1>Contact Us</h1>
+    <p>We’d love to work with you. Let's build something amazing together.</p>
+  </section>
+
+  <section id="login">
+    <h1>Login</h1>
+    <p>Access your dashboard, track projects, and manage your account.</p>
+  </section>
+</main>
+
+<!-- JavaScript -->
+<script>
+  const navbar = document.getElementById('navbar');
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('primary-navigation');
+  const progressBar = document.getElementById('scroll-progress');
+  const navLinks = [...navMenu.querySelectorAll('a[href^="#"]')];
+
+  
+  function handleScroll() {
+    
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+
+    
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = (window.scrollY / docHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  }
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+
+  
+  navToggle.addEventListener('click', () => {
+    const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!expanded));
+    navMenu.classList.toggle('open');
+  });
+
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        navMenu.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+
+  
+  const sectionMap = new Map();
+  navLinks.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const section = document.getElementById(id);
+    if (section) sectionMap.set(section, link);
+  });
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -60% 0px', 
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const link = sectionMap.get(entry.target);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        
+      }
+    });
+  }, observerOptions);
+
+  sectionMap.forEach((_, section) => observer.observe(section));
+
+  
+  function offsetAnchorOnLoadAndHash() {
+    if (location.hash.length > 1) {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - parseInt(getComputedStyle(navbar).height, 10),
+          behavior: 'smooth'
+        });
+      }
+    }
+  }
+  window.addEventListener('hashchange', offsetAnchorOnLoadAndHash);
+  window.addEventListener('load', offsetAnchorOnLoadAndHash);
+</script>
+
+</body>
+</html>
